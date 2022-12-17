@@ -5,8 +5,8 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in sea_shanty.gemspec
 gemspec
 
-gem "rake", "~> 13.0"
+gem "rake"
 
-gem "minitest", "~> 5.0"
+gem "minitest"
 
-gem "standard", "~> 1.3"
+gem "standard"
