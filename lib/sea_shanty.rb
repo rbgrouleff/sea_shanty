@@ -1,8 +1,18 @@
 # frozen_string_literal: true
 
-require_relative "sea_shanty/version"
+require "sea_shanty/configuration"
+require "sea_shanty/version"
 
 module SeaShanty
   class Error < StandardError; end
-  # Your code goes here...
+
+  module_function
+
+  def configuration
+    @configuration ||= Configuration.new
+  end
+
+  def configure(&block)
+    yield configuration
+  end
 end
