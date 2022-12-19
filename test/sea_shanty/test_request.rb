@@ -1,6 +1,7 @@
 # string_literal_frozen: true
 
 require "test_helper"
+require "uri"
 require "sea_shanty/request"
 
 module SeaShanty
@@ -26,13 +27,13 @@ module SeaShanty
     end
 
     def test_digest_uses_http_method_url_and_body
-      method = "GET"
-      url = "URL"
+      method = :get
+      url = URI::parse("https://example.com/hello")
       headers = {}
       body = "body"
       request = Request.new(method: method, url: url, headers: headers, body: body)
 
-      expected_digest = Digest::SHA1.hexdigest(method + url + body)
+      expected_digest = Digest::SHA1.hexdigest(method.to_s + url.to_s + body)
       assert_equal(expected_digest, request.digest)
     end
   end

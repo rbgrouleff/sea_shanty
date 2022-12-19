@@ -14,7 +14,7 @@ module SeaShanty
     end
 
     def digest
-      Digest::SHA1.hexdigest(method + url + body)
+      Digest::SHA1.hexdigest(method.to_s + url.to_s + body.to_s)
     end
   end
 end
