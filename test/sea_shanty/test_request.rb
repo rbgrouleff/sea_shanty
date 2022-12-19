@@ -1,0 +1,19 @@
+# string_literal_frozen: true
+
+require "test_helper"
+require "sea_shanty/request"
+
+module SeaShanty
+  class TestRequest < Minitest::Test
+    def test_digest_uses_http_method_url_and_body
+      method = "GET"
+      url = "URL"
+      headers = {}
+      body = "body"
+      request = Request.new(method: method, url: url, headers: headers, body: body)
+
+      expected_digest = Digest::SHA1.hexdigest(method + url + body)
+      assert_equal(expected_digest, request.digest)
+    end
+  end
+end
