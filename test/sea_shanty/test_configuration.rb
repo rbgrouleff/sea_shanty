@@ -7,11 +7,5 @@ module SeaShanty
     def setup
       @configuration = Configuration.new
     end
-
-    def test_lets_you_select_http_library
-      library = :faraday
-      @configuration.http_library = library
-      assert_equal(library, @configuration.http_library)
-    end
   end
 end
