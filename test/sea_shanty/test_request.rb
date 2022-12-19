@@ -5,6 +5,26 @@ require "sea_shanty/request"
 
 module SeaShanty
   class TestRequest < Minitest::Test
+    def setup
+      @request = Request.new(method: nil, url: nil, headers: nil, body: nil)
+    end
+
+    def test_has_a_method
+      assert_respond_to(@request, :method)
+    end
+
+    def test_has_an_url
+      assert_respond_to(@request, :url)
+    end
+
+    def test_has_a_headers
+      assert_respond_to(@request, :headers)
+    end
+
+    def test_has_a_body
+      assert_respond_to(@request, :body)
+    end
+
     def test_digest_uses_http_method_url_and_body
       method = "GET"
       url = "URL"
