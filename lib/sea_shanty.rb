@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "sea_shanty/errors"
 require "sea_shanty/configuration"
 require "sea_shanty/version"
 
