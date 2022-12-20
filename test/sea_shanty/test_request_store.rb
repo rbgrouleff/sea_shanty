@@ -27,6 +27,22 @@ module SeaShanty
       assert_path_exists(stored_request_file_path)
     end
 
+    def test_the_stored_request_includes_the_response
+      stored_request_file_path = Pathname(@dir).join(@request.file_path)
+      @request_store.store(@request, @response)
+      serialized_file_content = YAML.load(stored_request_file_path.read)
+      assert(serialized_file_content.has_key?(:response))
+      assert_equal(@response.to_h, serialized_file_content.fetch(:response))
+    end
+
+    def test_the_stored_request_includes_the_request
+      stored_request_file_path = Pathname(@dir).join(@request.file_path)
+      @request_store.store(@request, @response)
+      serialized_file_content = YAML.load(stored_request_file_path.read)
+      assert(serialized_file_content.has_key?(:request))
+      assert_equal(@request.to_h, serialized_file_content.fetch(:request))
+    end
+
     def test_it_has_the_reponse_for_a_stored_request
       @request_store.store(@request, @response)
       assert(@request_store.has_response_for?(@request))
