@@ -14,6 +14,12 @@ module SeaShanty
       request_file_path(request).exist?
     end
 
+    def load_response(request)
+      raise UnknownRequest, "SeaShanty: Unknown request #{request.method.to_s.upcase} to #{request.url.to_s}" unless has_response_for?(request)
+      contents = YAML.load(request_file_path(request).read)
+      Response.from_h(contents.fetch(:response))
+    end
+
     def store(request, response)
       file_path = request_file_path(request)
       file_path.dirname.mkpath

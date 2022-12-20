@@ -56,5 +56,17 @@ module SeaShanty
       @request_store.store(@request, @response)
       assert(@request_store.has_response_for?(@request))
     end
+
+    def test_load_response_finds_the_response_for_a_stored_request
+      @request_store.store(@request, @response)
+      assert_equal(@response, @request_store.load_response(@request))
+    end
+
+    def test_load_response_raises_if_request_is_unknown
+      method = :put
+      refute_equal(method, @request.method)
+      request = Request.new(method: method, url: @request.url, headers: @request.headers, body: @request.body)
+      assert_raises(UnknownRequest) { @request_store.load_response(request) }
+    end
   end
 end
