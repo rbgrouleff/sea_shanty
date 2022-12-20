@@ -23,8 +23,7 @@ module SeaShanty
       request = Request.new(method: :get, url: URI::parse("https://example.com/hello"), headers: {}, body: "request body")
       response = Response.new(status: 200, message: :ok, headers: {}, body: "response body")
       stored_request = Pathname(@dir)
-        .join(request.url.hostname)
-        .join(request.url.path.delete_prefix("/"), request.method.to_s, "#{request.digest}.yml")
+        .join(request.file_path)
       @request_store.store(request, response)
       assert_predicate(stored_request, :exist?)
     end
