@@ -35,5 +35,19 @@ module SeaShanty
         }
       }
     end
+
+    def ==(other)
+      self.class === other &&
+        status.to_i == other.status.to_i &&
+        message == other.message &&
+        headers == other.headers &&
+        body == other.body
+    end
+
+    alias :eql? :==
+
+    def hash
+      self.class.hash ^ status.to_i.hash ^ message.hash ^ headers.hash ^ body.hash
+    end
   end
 end

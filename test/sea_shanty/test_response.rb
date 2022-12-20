@@ -139,5 +139,39 @@ module SeaShanty
       assert_equal(@headers, response.headers)
       assert_equal("", response.body)
     end
+
+    def test_equality_uses_attribute_equality
+      other_response = Response.from_h(@response.to_h)
+      assert_equal(@response, other_response)
+    end
+
+    def test_equality_treats_string_and_int_status_the_same
+      response = Response.new(status: @status.to_s, message: @message, headers: @headers, body: @body)
+      other_response = Response.new(status: @status.to_i, message: @message, headers: @headers, body: @body)
+      assert_equal(response, other_response)
+    end
+
+    def test_equality_with_unequal_response
+      response = Response.new(status: @status.to_s, message: @message, headers: @headers, body: @body)
+      other_response = Response.new(status: @status.to_i, message: @message, headers: @headers, body: "Not the body #{@body}")
+      refute_equal(response, other_response)
+    end
+
+    def test_hash_uses_attributes
+      other_response = Response.from_h(@response.to_h)
+      assert_equal(@response.hash, other_response.hash)
+    end
+
+    def test_hash_treats_string_and_int_status_the_same
+      response = Response.new(status: @status.to_s, message: @message, headers: @headers, body: @body)
+      other_response = Response.new(status: @status.to_i, message: @message, headers: @headers, body: @body)
+      assert_equal(response.hash, other_response.hash)
+    end
+
+    def test_hash_with_unequal_response
+      response = Response.new(status: @status.to_s, message: @message, headers: @headers, body: @body)
+      other_response = Response.new(status: @status.to_i, message: @message, headers: @headers, body: "Not the body #{@body}")
+      refute_equal(response.hash, other_response.hash)
+    end
   end
 end
