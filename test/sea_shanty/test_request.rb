@@ -45,5 +45,32 @@ module SeaShanty
         .join(@url.path.delete_prefix("/").split("/").join(File::SEPARATOR), @method.to_s, @request.filename)
       assert_equal(expected, @request.file_path)
     end
+
+    def test_to_h_encodes_request_as_a_hash
+      expected = {
+        method: @method.to_s,
+        url: @url.to_s,
+        headers: @headers,
+        body: {
+          string: @body.to_s,
+          encoding: @body.encoding.name
+        }
+      }
+      assert_equal(expected, @request.to_h)
+    end
+
+    def test_to_h_handles_nil_body
+      request = Request.new(method: @method, url: @url, headers: @headers, body: nil)
+      expected = {
+        method: @method.to_s,
+        url: @url.to_s,
+        headers: @headers,
+        body: {
+          string: "",
+          encoding: ""
+        }
+      }
+      assert_equal(expected, request.to_h)
+    end
   end
 end

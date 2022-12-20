@@ -27,5 +27,17 @@ module SeaShanty
       url_path = url.path.delete_prefix("/").split("/").join(File::SEPARATOR)
       Pathname.new(url.hostname).join(url_path, method.to_s, filename)
     end
+
+    def to_h
+      {
+        method: method.to_s,
+        url: url.to_s,
+        headers: headers,
+        body: {
+          string: body.to_s,
+          encoding: body.nil? ? "" : body.encoding.name
+        }
+      }
+    end
   end
 end
