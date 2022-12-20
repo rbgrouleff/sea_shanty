@@ -27,11 +27,9 @@ module SeaShanty
       assert_path_exists(stored_request_file_path)
     end
 
-    def test_it_contains_a_stored_request
-      request = Request.new(method: :get, url: URI::parse("https://example.com/hello"), headers: {}, body: "request body")
-      response = Response.new(status: 200, message: :ok, headers: {}, body: "response body")
-      @request_store.store(request, response)
-      assert(@request_store.has_response_for?(request))
+    def test_it_has_the_reponse_for_a_stored_request
+      @request_store.store(@request, @response)
+      assert(@request_store.has_response_for?(@request))
     end
   end
 end
