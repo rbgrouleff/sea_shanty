@@ -10,5 +10,19 @@ module SeaShanty
       @headers = headers
       @body = body
     end
+
+    def to_h
+      {
+        status: {
+          code: status.to_i,
+          message: message
+        },
+        headers: headers,
+        body: {
+          string: body.to_s,
+          encoding: body.nil? ? "" : body.encoding.name
+        }
+      }
+    end
   end
 end
