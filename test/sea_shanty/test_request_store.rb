@@ -43,6 +43,15 @@ module SeaShanty
       assert_equal(@request.to_h, serialized_file_content.fetch(:request))
     end
 
+    def test_the_stored_request_includes_the_time_of_saving
+      stored_request_file_path = Pathname(@dir).join(@request.file_path)
+      @request_store.store(@request, @response)
+      expected = DateTime.parse(DateTime.now.to_s)
+      serialized_file_content = YAML.load(stored_request_file_path.read)
+      assert(serialized_file_content.has_key?(:stored_at))
+      assert_equal(expected, DateTime.parse(serialized_file_content.fetch(:stored_at)))
+    end
+
     def test_it_has_the_reponse_for_a_stored_request
       @request_store.store(@request, @response)
       assert(@request_store.has_response_for?(@request))

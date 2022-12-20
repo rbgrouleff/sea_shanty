@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "date"
 require "pathname"
 require "yaml"
 
@@ -32,7 +33,8 @@ module SeaShanty
     def serialize(request, response)
       {
         request: request.to_h,
-        response: response.to_h
+        response: response.to_h,
+        stored_at: DateTime.now.to_s
       }
     end
   end
