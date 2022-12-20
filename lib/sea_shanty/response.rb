@@ -4,6 +4,17 @@ module SeaShanty
   class Response
     attr_reader :body, :headers, :message, :status
 
+    class << self
+      def from_h(hash)
+        new(
+          status: hash.fetch(:status).fetch(:code).to_i,
+          message: hash.fetch(:status).fetch(:message),
+          headers: hash.fetch(:headers),
+          body: hash.fetch(:body).fetch(:encoding).empty? ? nil : hash.fetch(:body).fetch(:string)
+        )
+      end
+    end
+
     def initialize(status:, message:, headers:, body:)
       @status = status
       @message = message
