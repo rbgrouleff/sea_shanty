@@ -28,6 +28,10 @@ module SeaShanty
       Pathname.new(url.hostname).join(url_path, method.to_s, filename)
     end
 
+    def serialize
+      to_h
+    end
+
     def to_h
       {
         method: method.to_s,

@@ -72,5 +72,9 @@ module SeaShanty
       }
       assert_equal(expected, request.to_h)
     end
+
+    def test_serialize_produces_same_output_as_to_h
+      assert_equal(@request.to_h, @request.serialize)
+    end
   end
 end
