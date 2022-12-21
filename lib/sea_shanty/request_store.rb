@@ -45,8 +45,14 @@ module SeaShanty
     attr_reader :configuration, :generic_responses, :storage_dir
 
     def request_file_path(request)
-      _, file_path = generic_responses.find { |matcher, path| matcher.match?(request.url.to_s) }
-      storage_dir.join(file_path || request.file_path)
+      _, generic_file_path = generic_responses.find { |matcher, path| matcher.match?(request.url.to_s) }
+      file_path = if generic_file_path.nil?
+        request.file_path
+      else
+        generic_file_path.to_s.delete_prefix("/")
+      end
+
+      storage_dir.join(file_path)
     end
 
     def serialize(request, response)

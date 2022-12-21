@@ -67,7 +67,20 @@ module SeaShanty
       assert_equal(generic_response, actual_response)
     end
 
-    def test_it_passes_to_blocck_when_generic_response_regex_does_not_match_request_url
+    def test_it_ensures_generic_response_path_is_relative_to_storage_dir
+      generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
+      generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
+      @request_store.store(generic_request, generic_response)
+      @config.generic_responses[/\/generic\//] = "/#{generic_request.file_path}"
+      actual_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/actual"), headers: {}, body: nil)
+      actual_response = @request_store.fetch(actual_request) do
+        raise "NOPE"
+      end
+
+      assert_equal(generic_response, actual_response)
+    end
+
+    def test_it_passes_to_block_when_generic_response_regex_does_not_match_request_url
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
       @request_store.store(generic_request, generic_response)
