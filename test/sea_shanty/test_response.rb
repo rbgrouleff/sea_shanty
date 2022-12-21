@@ -144,6 +144,10 @@ module SeaShanty
       assert_equal("", response.body)
     end
 
+    def test_serialize_produces_same_output_as_to_h
+      assert_equal(@response.to_h, @response.serialize)
+    end
+
     def test_equality_uses_attribute_equality
       other_response = Response.from_h(@response.to_h)
       assert_equal(@response, other_response)
