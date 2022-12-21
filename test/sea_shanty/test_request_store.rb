@@ -68,5 +68,14 @@ module SeaShanty
       request = Request.new(method: method, url: @request.url, headers: @request.headers, body: @request.body)
       assert_raises(UnknownRequest) { @request_store.load_response(request) }
     end
+
+    def test_fetch_returns_stored_response
+      @request_store.store(@request, @response)
+      returned_response = @request_store.fetch(@request) do
+        Response.new(status: nil, message: nil, headers: nil, body: nil)
+      end
+
+      assert_equal(@response, returned_response)
+    end
   end
 end

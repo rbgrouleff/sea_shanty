@@ -10,6 +10,10 @@ module SeaShanty
       @storage_dir = Pathname.new(storage_dir)
     end
 
+    def fetch(request, &block)
+      load_response(request)
+    end
+
     def has_response_for?(request)
       request_file_path(request).exist?
     end
