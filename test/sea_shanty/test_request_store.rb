@@ -77,5 +77,22 @@ module SeaShanty
 
       assert_equal(@response, returned_response)
     end
+
+    def test_fetch_stores_response_for_unknown_request
+      refute(@request_store.has_response_for?(@request))
+      @request_store.fetch(@request) do
+        @response
+      end
+
+      assert(@request_store.has_response_for?(@request))
+    end
+
+    def test_fetch_returns_stored_response_after_storing_it
+      returned_response = @request_store.fetch(@request) do
+        @response
+      end
+
+      assert_equal(@response, returned_response)
+    end
   end
 end

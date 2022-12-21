@@ -11,7 +11,13 @@ module SeaShanty
     end
 
     def fetch(request, &block)
-      load_response(request)
+      if has_response_for?(request)
+        load_response(request)
+      else
+        response = yield
+        store(request, response)
+        response
+      end
     end
 
     def has_response_for?(request)
