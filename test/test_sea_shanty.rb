@@ -20,16 +20,20 @@ class TestSeaShanty < Minitest::Test
     assert_same(SeaShanty.configuration, yielded_object)
   end
 
-  def test_inject_inserts_identifier_in_list
-    SeaShanty.inject(:faraday)
-    assert_includes(SeaShanty.injected_libraries, :faraday)
+  def test_intercept_inserts_identifier_in_list
+    skip("Not implemented yet...")
+    assert_predicate(SeaShanty.intercepted_libraries, :empty?)
+    SeaShanty.intercept(:faraday)
+    assert_includes(SeaShanty.intercepted_libraries, :faraday)
   end
 
-  def test_inject_only_adds_same_library_once
+  def test_intercept_only_adds_same_library_once
+    skip("Not implemented yet...")
     identifier = :foo
-    SeaShanty.inject(identifier)
-    SeaShanty.inject(identifier)
-    assert_equal(1, SeaShanty.injected_libraries.select { |i| i == identifier }.length)
+    assert_predicate(SeaShanty.intercepted_libraries, :empty?)
+    SeaShanty.intercept(identifier)
+    SeaShanty.intercept(identifier)
+    assert_equal(1, SeaShanty.intercepted_libraries.select { |i| i == identifier }.length)
   end
 
   def test_that_it_has_a_version_number
