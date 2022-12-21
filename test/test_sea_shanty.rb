@@ -8,7 +8,7 @@ class TestSeaShanty < Minitest::Test
   end
 
   def test_configuration_is_a_singleton
-    assert_equal(SeaShanty.configuration.object_id, SeaShanty.configuration.object_id)
+    assert_same(SeaShanty.configuration, SeaShanty.configuration)
   end
 
   def test_configure_yields_the_configuration
@@ -17,7 +17,7 @@ class TestSeaShanty < Minitest::Test
       yielded_object = config
     end
 
-    assert_equal(SeaShanty.configuration.object_id, yielded_object.object_id)
+    assert_same(SeaShanty.configuration, yielded_object)
   end
 
   def test_inject_inserts_identifier_in_list
