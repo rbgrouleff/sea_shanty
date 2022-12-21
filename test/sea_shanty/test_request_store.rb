@@ -54,6 +54,19 @@ module SeaShanty
       assert(@request_store.has_response_for?(@request))
     end
 
+    def test_it_has_the_response_when_a_generic_response_regex_matches_request_url
+      generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
+      generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
+      @request_store.store(generic_request, generic_response)
+      @config.generic_responses[/\/generic\//] = generic_request.file_path
+      actual_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/actual"), headers: {}, body: nil)
+      actual_response = @request_store.fetch(actual_request) do
+        raise "NOPE"
+      end
+
+      assert_equal(generic_response, actual_response)
+    end
+
     def test_load_response_finds_the_response_for_a_stored_request
       @request_store.store(@request, @response)
       assert_equal(@response, @request_store.load_response(@request))

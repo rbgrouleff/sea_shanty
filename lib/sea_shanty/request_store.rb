@@ -6,8 +6,9 @@ require "yaml"
 
 module SeaShanty
   class RequestStore
-    def initialize(configuration, storage_dir: configuration.storage_dir)
+    def initialize(configuration, generic_responses: configuration.generic_responses, storage_dir: configuration.storage_dir)
       @configuration = configuration
+      @generic_responses = generic_responses
       @storage_dir = Pathname.new(storage_dir)
     end
 
@@ -41,10 +42,11 @@ module SeaShanty
 
     private
 
-    attr_reader :configuration, :storage_dir
+    attr_reader :configuration, :generic_responses, :storage_dir
 
     def request_file_path(request)
-      storage_dir.join(request.file_path)
+      _, file_path = generic_responses.find { |matcher, path| matcher.match?(request.url.to_s) }
+      storage_dir.join(file_path || request.file_path)
     end
 
     def serialize(request, response)
