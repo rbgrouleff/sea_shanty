@@ -29,6 +29,10 @@ module SeaShanty
       assert_respond_to(@response, :body)
     end
 
+    def test_has_an_original_response
+      assert_respond_to(@response, :original_response)
+    end
+
     def test_to_h_encodes_response_as_hash
       expected = {
         status: {
@@ -172,6 +176,11 @@ module SeaShanty
       response = Response.new(status: @status.to_s, message: @message, headers: @headers, body: @body)
       other_response = Response.new(status: @status.to_i, message: @message, headers: @headers, body: "Not the body #{@body}")
       refute_equal(response.hash, other_response.hash)
+    end
+
+    def test_was_stored_when_original_response_is_present
+      response = Response.new(status: @status, message: @message, headers: @headers, body: @body, original_response: :response)
+      assert_predicate(response, :was_stored?)
     end
   end
 end

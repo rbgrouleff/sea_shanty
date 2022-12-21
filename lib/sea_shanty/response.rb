@@ -2,7 +2,7 @@
 
 module SeaShanty
   class Response
-    attr_reader :body, :headers, :message, :status
+    attr_reader :body, :headers, :message, :status, :original_response
 
     class << self
       def from_h(hash)
@@ -15,11 +15,12 @@ module SeaShanty
       end
     end
 
-    def initialize(status:, message:, headers:, body:)
+    def initialize(status:, message:, headers:, body:, original_response: ORIGINAL_RESPONSE_NOT_PRESENT)
       @status = status
       @message = message
       @headers = headers
       @body = body
+      @original_response = original_response
     end
 
     def to_h
@@ -36,6 +37,10 @@ module SeaShanty
       }
     end
 
+    def was_stored?
+      ORIGINAL_RESPONSE_NOT_PRESENT != original_response
+    end
+
     def ==(other)
       self.class === other &&
         status.to_i == other.status.to_i &&
@@ -49,5 +54,9 @@ module SeaShanty
     def hash
       self.class.hash ^ status.to_i.hash ^ message.hash ^ headers.hash ^ body.hash
     end
+
+    private
+
+    ORIGINAL_RESPONSE_NOT_PRESENT = :original_response_not_present
   end
 end
