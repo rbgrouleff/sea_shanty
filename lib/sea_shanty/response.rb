@@ -47,7 +47,7 @@ module SeaShanty
         body == other.body
     end
 
-    alias :eql? :==
+    alias_method :eql?, :==
 
     def hash
       self.class.hash ^ status.hash ^ message.hash ^ headers.hash ^ body.hash
