@@ -6,7 +6,8 @@ require "yaml"
 
 module SeaShanty
   class RequestStore
-    def initialize(storage_dir)
+    def initialize(configuration, storage_dir: configuration.storage_dir)
+      @configuration = configuration
       @storage_dir = Pathname.new(storage_dir)
     end
 
@@ -40,7 +41,7 @@ module SeaShanty
 
     private
 
-    attr_reader :storage_dir
+    attr_reader :configuration, :storage_dir
 
     def request_file_path(request)
       storage_dir.join(request.file_path)

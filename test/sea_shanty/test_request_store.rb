@@ -12,7 +12,7 @@ module SeaShanty
   class TestRequestStore < Minitest::Test
     def setup
       @dir = Dir.mktmpdir("sea_shanty")
-      @request_store = RequestStore.new(Pathname.new(@dir))
+      @request_store = RequestStore.new(:config, storage_dir: Pathname.new(@dir))
       @request = Request.new(method: :get, url: URI::parse("https://example.com/hello"), headers: {}, body: "request body")
       @response = Response.new(status: 200, message: :ok, headers: {}, body: "response body")
     end
