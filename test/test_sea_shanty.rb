@@ -33,7 +33,7 @@ class TestSeaShanty < Minitest::Test
     assert_predicate(SeaShanty.intercepted_libraries, :empty?)
     SeaShanty.intercept(identifier)
     SeaShanty.intercept(identifier)
-    assert_equal(1, SeaShanty.intercepted_libraries.select { |i| i == identifier }.length)
+    assert_equal(1, SeaShanty.intercepted_libraries.count { |i| i == identifier })
   end
 
   def test_that_it_has_a_version_number
