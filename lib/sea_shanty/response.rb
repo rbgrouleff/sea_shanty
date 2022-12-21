@@ -16,7 +16,7 @@ module SeaShanty
     end
 
     def initialize(status:, message:, headers:, body:, original_response: ORIGINAL_RESPONSE_NOT_PRESENT)
-      @status = status.to_i
+      @status = Integer(status, status.is_a?(String) ? 10 : 0)
       @message = message
       @headers = headers
       @body = body
