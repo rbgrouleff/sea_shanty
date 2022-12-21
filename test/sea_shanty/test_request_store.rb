@@ -14,7 +14,7 @@ module SeaShanty
       @dir = Dir.mktmpdir("sea_shanty")
       @config = Configuration.new
       @request_store = RequestStore.new(@config, storage_dir: Pathname.new(@dir))
-      @request = Request.new(method: :get, url: URI::parse("https://example.com/hello"), headers: {}, body: "request body")
+      @request = Request.new(method: :get, url: URI.parse("https://example.com/hello"), headers: {}, body: "request body")
       @response = Response.new(status: 200, message: :ok, headers: {}, body: "response body")
     end
 

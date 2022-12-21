@@ -8,7 +8,7 @@ module SeaShanty
   class TestRequest < Minitest::Test
     def setup
       @method = :get
-      @url = URI::parse("https://example.com/hello")
+      @url = URI.parse("https://example.com/hello")
       @headers = {}
       @body = "body"
       @request = Request.new(method: @method, url: @url, headers: @headers, body: @body)
