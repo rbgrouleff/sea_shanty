@@ -23,32 +23,28 @@ module SeaShanty
     end
 
     def test_it_stores_a_request_with_the_resulting_response
-      stored_request_file_path = Pathname(@dir).join(@request.file_path)
       @request_store.store(@request, @response)
-      assert_path_exists(stored_request_file_path)
+      assert_path_exists(path_for_request(@request))
     end
 
     def test_the_stored_request_includes_the_response
-      stored_request_file_path = Pathname(@dir).join(@request.file_path)
       @request_store.store(@request, @response)
-      serialized_file_content = YAML.load(stored_request_file_path.read)
+      serialized_file_content = YAML.load(path_for_request(@request).read)
       assert(serialized_file_content.has_key?(:response))
       assert_equal(@response.to_h, serialized_file_content.fetch(:response))
     end
 
     def test_the_stored_request_includes_the_request
-      stored_request_file_path = Pathname(@dir).join(@request.file_path)
       @request_store.store(@request, @response)
-      serialized_file_content = YAML.load(stored_request_file_path.read)
+      serialized_file_content = YAML.load(path_for_request(@request).read)
       assert(serialized_file_content.has_key?(:request))
       assert_equal(@request.to_h, serialized_file_content.fetch(:request))
     end
 
     def test_the_stored_request_includes_the_time_of_saving
-      stored_request_file_path = Pathname(@dir).join(@request.file_path)
       @request_store.store(@request, @response)
       expected = DateTime.parse(DateTime.now.to_s)
-      serialized_file_content = YAML.load(stored_request_file_path.read)
+      serialized_file_content = YAML.load(path_for_request(@request).read)
       assert(serialized_file_content.has_key?(:stored_at))
       assert_equal(expected, DateTime.parse(serialized_file_content.fetch(:stored_at)))
     end
@@ -94,6 +90,10 @@ module SeaShanty
       end
 
       assert_equal(@response, returned_response)
+    end
+
+    def path_for_request(request)
+      Pathname(@dir).join(request.file_path)
     end
   end
 end
