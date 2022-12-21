@@ -72,7 +72,7 @@ module SeaShanty
     def test_fetch_returns_stored_response
       @request_store.store(@request, @response)
       returned_response = @request_store.fetch(@request) do
-        Response.new(status: nil, message: nil, headers: nil, body: nil)
+        raise "NOPE"
       end
 
       assert_equal(@response, returned_response)
