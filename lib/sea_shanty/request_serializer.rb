@@ -8,9 +8,9 @@ module SeaShanty
     end
 
     def serialize(request)
-      hash = Hash[request.to_h]
-      hash[:headers] = Hash[hash.fetch(:headers).map { |name, value| [name, headers_filter.(name, value)] }]
-      hash[:body] = body_filter.(hash.fetch(:body))
+      hash = request.to_h
+      hash[:headers] = hash.fetch(:headers).map { |name, value| [name, headers_filter.call(name, value)] }.to_h
+      hash[:body] = body_filter.call(hash.fetch(:body))
       hash
     end
 

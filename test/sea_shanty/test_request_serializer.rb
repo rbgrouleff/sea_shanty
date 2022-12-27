@@ -34,7 +34,7 @@ module SeaShanty
       header_name = "Authorization"
       replacement = "<auth token>"
       request = Request.new(method: @method, url: @url, headers: @headers, body: @body)
-      serializer = RequestSerializer.new(headers_filter: lambda { |name, value| name == header_name ? replacement : value })
+      serializer = RequestSerializer.new(headers_filter: lambda { |name, value| (name == header_name) ? replacement : value })
 
       assert_equal(replacement, serializer.serialize(request).dig(:headers, header_name))
     end
@@ -43,7 +43,7 @@ module SeaShanty
       filtered_header_name = "Authorization"
       unfiltered_header_name = "Accept"
       request = Request.new(method: @method, url: @url, headers: @headers, body: @body)
-      serializer = RequestSerializer.new(headers_filter: lambda { |name, value| name == filtered_header_name ? value.reverse : value })
+      serializer = RequestSerializer.new(headers_filter: lambda { |name, value| (name == filtered_header_name) ? value.reverse : value })
 
       assert_equal(@headers.fetch(unfiltered_header_name), serializer.serialize(request).dig(:headers, unfiltered_header_name))
     end
