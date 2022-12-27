@@ -1,4 +1,4 @@
-# string_literal_frozen: true
+# frozen_string_literal: true
 
 require "test_helper"
 require "uri"
