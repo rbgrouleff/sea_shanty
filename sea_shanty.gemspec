@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "SeaShanty is a minimalistic library for recording HTTP requests and responses and replaying responses for already seen requests in an unobtrusive and test framework agnostic way."
   spec.homepage = "https://github.com/rbgrouleff/sea_shanty"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 2.7.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
