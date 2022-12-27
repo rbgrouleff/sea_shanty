@@ -3,6 +3,7 @@
 require "date"
 require "pathname"
 require "yaml"
+require "sea_shanty/request_serializer"
 
 module SeaShanty
   class RequestStore
@@ -10,6 +11,7 @@ module SeaShanty
       @configuration = configuration
       @generic_responses = generic_responses
       @storage_dir = Pathname.new(storage_dir)
+      @request_serializer = RequestSerializer.new
     end
 
     def fetch(request, &block)
@@ -42,7 +44,7 @@ module SeaShanty
 
     private
 
-    attr_reader :configuration, :generic_responses, :storage_dir
+    attr_reader :configuration, :generic_responses, :storage_dir, :request_serializer
 
     def request_file_path(request)
       _, generic_file_path = generic_responses.find { |matcher, path| matcher.match?(request.url.to_s) }
@@ -57,7 +59,7 @@ module SeaShanty
 
     def serialize(request, response)
       {
-        request: request.serialize,
+        request: request_serializer.serialize(request),
         response: response.serialize,
         stored_at: DateTime.now.to_s
       }
