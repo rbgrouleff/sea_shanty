@@ -30,14 +30,14 @@ module SeaShanty
     def test_the_stored_request_includes_the_response
       @request_store.store(@request, @response)
       serialized_file_content = YAML.load(path_for_request(@request).read)
-      assert(serialized_file_content.has_key?(:response))
+      assert_operator(serialized_file_content, :has_key?, :response)
       assert_equal(@response.to_h, serialized_file_content.fetch(:response))
     end
 
     def test_the_stored_request_includes_the_request
       @request_store.store(@request, @response)
       serialized_file_content = YAML.load(path_for_request(@request).read)
-      assert(serialized_file_content.has_key?(:request))
+      assert_operator(serialized_file_content, :has_key?, :request)
       assert_equal(@request.to_h, serialized_file_content.fetch(:request))
     end
 
@@ -45,13 +45,13 @@ module SeaShanty
       @request_store.store(@request, @response)
       expected = DateTime.parse(DateTime.now.to_s)
       serialized_file_content = YAML.load(path_for_request(@request).read)
-      assert(serialized_file_content.has_key?(:stored_at))
+      assert_operator(serialized_file_content, :has_key?, :stored_at)
       assert_equal(expected, DateTime.parse(serialized_file_content.fetch(:stored_at)))
     end
 
     def test_it_has_the_reponse_for_a_stored_request
       @request_store.store(@request, @response)
-      assert(@request_store.has_response_for?(@request))
+      assert_operator(@request_store, :has_response_for?, @request)
     end
 
     def test_it_has_the_response_when_a_generic_response_regex_matches_request_url
@@ -116,21 +116,25 @@ module SeaShanty
     end
 
     def test_fetch_stores_response_for_unknown_request
-      refute(@request_store.has_response_for?(@request))
+      refute_operator(@request_store, :has_response_for?, @request)
       @request_store.fetch(@request) do
         @response
       end
 
-      assert(@request_store.has_response_for?(@request))
+      assert_operator(@request_store, :has_response_for?, @request)
     end
 
     def test_fetch_returns_stored_response_after_storing_it
+      refute_operator(@request_store, :has_response_for?, @request)
       returned_response = @request_store.fetch(@request) do
         @response
       end
 
+      assert_operator(@request_store, :has_response_for?, @request)
       assert_equal(@response, returned_response)
     end
+
+    private
 
     def path_for_request(request)
       Pathname(@dir).join(request.file_path)
