@@ -60,7 +60,7 @@ module SeaShanty
     def serialize(request, response)
       {
         request: request_serializer.serialize(request),
-        response: response.serialize,
+        response: response.to_h,
         stored_at: DateTime.now.to_s
       }
     end
