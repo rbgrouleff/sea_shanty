@@ -134,6 +134,20 @@ module SeaShanty
       assert_equal(@response, returned_response)
     end
 
+    def test_fetch_fails_when_readonly_and_response_is_not_stored
+      @config.readonly = true
+
+      assert_raises(UnknownRequest) { @request_store.fetch(@request) { @response } }
+    end
+
+    def test_fetch_returns_stored_response_when_readonly
+      @config.readonly = true
+      @request_store.store(@request, @response)
+      returned_response = @request_store.fetch(@request) { nil }
+
+      assert_equal(@response, returned_response)
+    end
+
     private
 
     def path_for_request(request)

@@ -15,7 +15,7 @@ module SeaShanty
     end
 
     def fetch(request, &block)
-      if has_response_for?(request)
+      if configuration.readonly? || has_response_for?(request)
         load_response(request)
       else
         response = yield
