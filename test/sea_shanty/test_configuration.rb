@@ -45,5 +45,23 @@ module SeaShanty
       @configuration.readonly = true
       assert_predicate(@configuration, :readonly?)
     end
+
+    def test_it_has_a_bypass_writer
+      assert_respond_to(@configuration, :bypass=)
+    end
+
+    def test_it_has_a_bypass_reader
+      assert_respond_to(@configuration, :bypass)
+    end
+
+    def test_it_has_a_bypass_predicate
+      assert_respond_to(@configuration, :bypass?)
+    end
+
+    def test_setting_bypass_updates_it
+      refute_predicate(@configuration, :bypass?)
+      @configuration.bypass = true
+      assert_predicate(@configuration, :bypass?)
+    end
   end
 end

@@ -4,7 +4,8 @@ require "sea_shanty/errors"
 
 module SeaShanty
   class Configuration
-    attr_accessor :readonly
+    attr_accessor :bypass, :readonly
+    alias_method :bypass?, :bypass
     alias_method :readonly?, :readonly
 
     def generic_responses=(responses)
