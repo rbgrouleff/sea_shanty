@@ -4,6 +4,9 @@ require "sea_shanty/errors"
 
 module SeaShanty
   class Configuration
+    attr_accessor :readonly
+    alias_method :readonly?, :readonly
+
     def generic_responses=(responses)
       unless Hash === responses
         raise(
