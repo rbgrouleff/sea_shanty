@@ -148,6 +148,25 @@ module SeaShanty
       assert_equal(@response, returned_response)
     end
 
+    def test_fetch_does_not_store_response_when_bypass_is_set_and_response_is_not_stored
+      @config.bypass = true
+
+      refute_operator(@request_store, :has_response_for?, @request)
+      returned_response = @request_store.fetch(@request) { @response }
+
+      refute_operator(@request_store, :has_response_for?, @request)
+      assert_equal(@response, returned_response)
+    end
+
+    def test_fetch_returns_response_from_block_if_it_has_a_stored_response_when_bypass_is_set
+      @config.bypass = true
+      @request_store.store(@request, @response)
+      expected_response = Response.new(status: 302, message: "Temporary redirect", headers: {"Location" => "https://example.com/redirected"}, body: nil)
+      returned_response = @request_store.fetch(@request) { expected_response }
+
+      assert_equal(expected_response, returned_response)
+    end
+
     private
 
     def path_for_request(request)

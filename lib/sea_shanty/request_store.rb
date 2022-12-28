@@ -15,11 +15,11 @@ module SeaShanty
     end
 
     def fetch(request, &block)
-      if configuration.readonly? || has_response_for?(request)
+      if !configuration.bypass? && (configuration.readonly? || has_response_for?(request))
         load_response(request)
       else
         response = yield
-        store(request, response)
+        store(request, response) unless configuration.bypass?
         response
       end
     end
