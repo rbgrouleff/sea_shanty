@@ -23,10 +23,6 @@ module SeaShanty
       @original_response = original_response
     end
 
-    def serialize
-      to_h
-    end
-
     def to_h
       {
         status: {
