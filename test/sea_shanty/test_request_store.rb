@@ -143,7 +143,7 @@ module SeaShanty
     def test_fetch_returns_stored_response_when_readonly
       @config.readonly = true
       @request_store.store(@request, @response)
-      returned_response = @request_store.fetch(@request) { nil }
+      returned_response = @request_store.fetch(@request) { raise "NOPE" }
 
       assert_equal(@response, returned_response)
     end
