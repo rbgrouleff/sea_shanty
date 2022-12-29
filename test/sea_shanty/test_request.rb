@@ -30,22 +30,6 @@ module SeaShanty
       assert_respond_to(@request, :body)
     end
 
-    def test_digest_uses_http_method_url_and_body
-      expected_digest = Digest::SHA1.hexdigest(@method.to_s + @url.to_s + @body)
-      assert_equal(expected_digest, @request.digest)
-    end
-
-    def test_filename
-      assert_equal("#{@request.digest}.yml", @request.filename)
-    end
-
-    def test_file_path
-      expected = Pathname
-        .new(@url.hostname)
-        .join(@url.path.delete_prefix("/").split("/").join(File::SEPARATOR), @method.to_s, @request.filename)
-      assert_equal(expected, @request.file_path)
-    end
-
     def test_to_h_encodes_request_as_a_hash
       expected = {
         method: @method.to_s,
