@@ -71,5 +71,63 @@ module SeaShanty
       @configuration.bypass = true
       assert_predicate(@configuration, :bypass?)
     end
+
+    def test_it_has_a_request_body_filter_reader
+      assert_respond_to(@configuration, :request_body_filter)
+    end
+
+    def test_it_has_a_request_body_filter_writer
+      assert_respond_to(@configuration, :request_body_filter=)
+    end
+
+    def test_it_has_a_request_headers_filter_reader
+      assert_respond_to(@configuration, :request_headers_filter)
+    end
+
+    def test_it_has_a_request_headers_filter_writer
+      assert_respond_to(@configuration, :request_headers_filter=)
+    end
+
+    def test_setting_request_body_filter_to_a_lambda
+      filter = lambda { |body| body }
+      @configuration.request_body_filter = filter
+      assert_equal(filter, @configuration.request_body_filter)
+    end
+
+    def test_setting_request_body_filter_to_a_lambda_with_an_arity_larger_than_one
+      filter = lambda { |body, _| body }
+      assert_raises(ConfigurationError) { @configuration.request_body_filter = filter }
+    end
+
+    def test_setting_request_body_filter_to_a_lambda_with_an_arity_of_zero
+      filter = lambda { "foo" }
+      assert_raises(ConfigurationError) { @configuration.request_body_filter = filter }
+    end
+
+    def test_setting_request_body_filter_to_something_that_is_not_callable
+      filter = :foo
+      assert_raises(ConfigurationError) { @configuration.request_body_filter = filter }
+    end
+
+    def test_setting_request_headers_filter_to_a_lambda
+      filter = lambda { |key, value| value }
+      @configuration.request_headers_filter = filter
+      assert_equal(filter, @configuration.request_headers_filter)
+    end
+
+    def test_setting_request_headers_filter_to_a_lambda_with_an_less_than_two
+      filter = lambda { |key| headers }
+      assert_raises(ConfigurationError) { @configuration.request_headers_filter = filter }
+    end
+
+    def test_setting_request_headers_filter_to_a_lambda_with_an_arity_larger_than_two
+      filter = lambda { |key| headers }
+      assert_raises(ConfigurationError) { @configuration.request_headers_filter = filter }
+    end
+
+    def test_setting_request_headers_filter_to_something_that_is_not_callable
+      filter = :foo
+      assert_raises(ConfigurationError) { @configuration.request_headers_filter = filter }
+    end
   end
 end

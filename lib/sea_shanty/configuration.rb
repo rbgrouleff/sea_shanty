@@ -5,6 +5,7 @@ require "sea_shanty/errors"
 module SeaShanty
   class Configuration
     attr_accessor :bypass, :readonly, :storage_dir
+    attr_reader :request_body_filter, :request_headers_filter
     alias_method :bypass?, :bypass
     alias_method :readonly?, :readonly
 
@@ -23,6 +24,18 @@ module SeaShanty
 
     def generic_responses
       @generic_responses ||= {}
+    end
+
+    def request_body_filter=(filter)
+      raise ConfigurationError, "Filter must have a call method" unless filter.respond_to?(:call)
+      raise ConfigurationError, "Filter must have an arity of exactly 1" unless filter.arity == 1
+      @request_body_filter = filter
+    end
+
+    def request_headers_filter=(filter)
+      raise ConfigurationError, "Filter must have a call method" unless filter.respond_to?(:call)
+      raise ConfigurationError, "Filter must have an arity of exactly 2" unless filter.arity == 2
+      @request_headers_filter = filter
     end
   end
 end
