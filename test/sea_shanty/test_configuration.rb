@@ -88,6 +88,16 @@ module SeaShanty
       assert_respond_to(@configuration, :request_headers_filter=)
     end
 
+    def test_request_body_filter_default
+      assert_equal(1, @configuration.request_body_filter.arity)
+      assert_respond_to(@configuration.request_body_filter, :call)
+    end
+
+    def test_request_headers_filter_default
+      assert_equal(2, @configuration.request_headers_filter.arity)
+      assert_respond_to(@configuration.request_headers_filter, :call)
+    end
+
     def test_setting_request_body_filter_to_a_lambda
       filter = lambda { |body| body }
       @configuration.request_body_filter = filter
