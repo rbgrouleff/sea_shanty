@@ -2,7 +2,6 @@
 
 require "sea_shanty/errors"
 require "sea_shanty/configuration"
-require "sea_shanty/faraday"
 require "sea_shanty/version"
 
 module SeaShanty
