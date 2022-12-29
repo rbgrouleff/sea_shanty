@@ -54,9 +54,9 @@ module SeaShanty
     def request_file_path(request)
       _, generic_file_path = generic_responses.find { |matcher, path| matcher.match?(request.url.to_s) }
       file_path = if generic_file_path.nil?
-        request.file_path
+        request_serializer.file_path(request)
       else
-        generic_file_path.to_s.delete_prefix("/")
+        Pathname.new(generic_file_path.to_s)
       end
 
       storage_dir.join(file_path)

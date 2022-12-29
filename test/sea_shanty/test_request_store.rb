@@ -57,9 +57,12 @@ module SeaShanty
     def test_it_has_the_response_when_a_generic_response_regex_matches_request_url
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
+
       @request_store.store(generic_request, generic_response)
-      @config.generic_responses[/\/generic\//] = generic_request.file_path
+      @config.generic_responses[/\/generic\//] = path_for_request(generic_request).to_s
+
       actual_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/actual"), headers: {}, body: nil)
+
       actual_response = @request_store.fetch(actual_request) do
         raise "NOPE"
       end
@@ -71,7 +74,7 @@ module SeaShanty
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
       @request_store.store(generic_request, generic_response)
-      @config.generic_responses[/\/generic\//] = "/#{generic_request.file_path}"
+      @config.generic_responses[/\/generic\//] = path_for_request(generic_request).to_s
       actual_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/actual"), headers: {}, body: nil)
       actual_response = @request_store.fetch(actual_request) do
         raise "NOPE"
@@ -84,7 +87,7 @@ module SeaShanty
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
       @request_store.store(generic_request, generic_response)
-      @config.generic_responses[/\/generic\//] = generic_request.file_path
+      @config.generic_responses[/\/generic\//] = path_for_request(generic_request).to_s
       actual_request = Request.new(method: :get, url: URI.parse("https://example.com/not_generic/actual"), headers: {}, body: nil)
       expected_response = Response.new(status: 200, message: "OK", headers: {}, body: "NOT generic response")
       actual_response = @request_store.fetch(actual_request) do
@@ -177,7 +180,8 @@ module SeaShanty
     private
 
     def path_for_request(request)
-      Pathname(@dir).join(request.file_path)
+      serializer = RequestSerializer.new
+      Pathname(@dir).join(serializer.file_path(request))
     end
   end
 end
