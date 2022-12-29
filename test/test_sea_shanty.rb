@@ -20,6 +20,42 @@ class TestSeaShanty < Minitest::Test
     assert_same(SeaShanty.configuration, yielded_object)
   end
 
+  def test_configure_overwrites_bypass_with_env_variable
+    ENV["SEA_SHANTY_BYPASS"] = "1"
+    SeaShanty.configure do |config|
+      config.bypass = false
+    end
+
+    assert_predicate(SeaShanty.configuration, :bypass?)
+  end
+
+  def test_configure_overwrites_bypass_with_false_if_env_var_is_not_true
+    ENV["SEA_SHANTY_BYPASS"] = "F"
+    SeaShanty.configure do |config|
+      config.bypass = true
+    end
+
+    refute_predicate(SeaShanty.configuration, :bypass?)
+  end
+
+  def test_configure_overwrites_readonly_with_env_variable
+    ENV["SEA_SHANTY_READONLY"] = "1"
+    SeaShanty.configure do |config|
+      config.readonly = false
+    end
+
+    assert_predicate(SeaShanty.configuration, :readonly?)
+  end
+
+  def test_configure_overwrites_readonly_with_false_if_env_var_is_not_true
+    ENV["SEA_SHANTY_READONLY"] = "F"
+    SeaShanty.configure do |config|
+      config.readonly = true
+    end
+
+    refute_predicate(SeaShanty.configuration, :readonly?)
+  end
+
   def test_intercept_inserts_identifier_in_list
     skip("Not implemented yet...")
     assert_predicate(SeaShanty.intercepted_libraries, :empty?)
