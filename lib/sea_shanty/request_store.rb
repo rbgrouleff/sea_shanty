@@ -15,7 +15,12 @@ module SeaShanty
     end
 
     def fetch(request, &block)
-      if !configuration.bypass? && (configuration.readonly? || has_response_for?(request))
+      if configuration.bypass?
+        raise ConfigurationError, "Bypass and readonly are both true - please set only one of them." if configuration.readonly?
+        yield
+      elsif configuration.readonly?
+        load_response(request)
+      elsif has_response_for?(request)
         load_response(request)
       else
         response = yield

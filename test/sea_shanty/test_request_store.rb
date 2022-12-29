@@ -167,6 +167,13 @@ module SeaShanty
       assert_equal(expected_response, returned_response)
     end
 
+    def test_fetch_fails_if_bypass_and_readonly_are_both_true
+      @config.bypass = true
+      @config.readonly = true
+
+      assert_raises(ConfigurationError) { @request_store.fetch(@request) { raise "NOPE" } }
+    end
+
     private
 
     def path_for_request(request)
