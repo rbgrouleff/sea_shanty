@@ -11,7 +11,7 @@ module SeaShanty
       @configuration = configuration
       @generic_responses = generic_responses
       @storage_dir = Pathname.new(storage_dir)
-      @request_serializer = RequestSerializer.new
+      @request_serializer = RequestSerializer.new(headers_filter: configuration.request_headers_filter, body_filter: configuration.request_body_filter)
     end
 
     def fetch(request, &block)
