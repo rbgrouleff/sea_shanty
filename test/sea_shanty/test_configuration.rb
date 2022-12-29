@@ -28,6 +28,14 @@ module SeaShanty
       assert_same(@configuration.generic_responses, @configuration.generic_responses)
     end
 
+    def test_it_has_a_storage_dir_reader
+      assert_respond_to(@configuration, :storage_dir)
+    end
+
+    def test_it_has_a_storage_dir_writer
+      assert_respond_to(@configuration, :storage_dir=)
+    end
+
     def test_it_has_a_readonly_reader
       assert_respond_to(@configuration, :readonly)
     end

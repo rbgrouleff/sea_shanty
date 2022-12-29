@@ -4,7 +4,7 @@ require "sea_shanty/errors"
 
 module SeaShanty
   class Configuration
-    attr_accessor :bypass, :readonly
+    attr_accessor :bypass, :readonly, :storage_dir
     alias_method :bypass?, :bypass
     alias_method :readonly?, :readonly
 
