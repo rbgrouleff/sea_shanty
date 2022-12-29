@@ -7,6 +7,10 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    faraday (2.7.2)
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-net_http (3.0.2)
     json (2.6.3)
     language_server-protocol (3.17.0.2)
     minitest (5.16.3)
@@ -33,6 +37,7 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     ruby-progressbar (1.11.0)
+    ruby2_keywords (0.0.5)
     standard (1.20.0)
       language_server-protocol (~> 3.17.0.2)
       rubocop (= 1.40.0)
@@ -44,6 +49,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  faraday
   minitest
   rake
   sea_shanty!

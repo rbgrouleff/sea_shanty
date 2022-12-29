@@ -10,3 +10,5 @@ gem "rake"
 gem "minitest"
 
 gem "standard"
+
+gem "faraday"
