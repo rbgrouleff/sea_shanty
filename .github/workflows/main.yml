@@ -29,3 +29,5 @@ jobs:
         bundler-cache: true
     - name: Run the test task
       run: bundle exec rake test
+    - name: Run standardRB
+      run: bundle exec rake standard
