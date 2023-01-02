@@ -29,14 +29,14 @@ module SeaShanty
 
     def test_the_stored_request_includes_the_response
       @request_store.store(@request, @response)
-      serialized_file_content = YAML.load(path_for_request(@request).read)
+      serialized_file_content = YAML.safe_load(path_for_request(@request).read, permitted_classes: [Symbol])
       assert_operator(serialized_file_content, :has_key?, :response)
       assert_equal(@response.to_h, serialized_file_content.fetch(:response))
     end
 
     def test_the_stored_request_includes_the_request
       @request_store.store(@request, @response)
-      serialized_file_content = YAML.load(path_for_request(@request).read)
+      serialized_file_content = YAML.safe_load(path_for_request(@request).read, permitted_classes: [Symbol])
       assert_operator(serialized_file_content, :has_key?, :request)
       assert_equal(@request.to_h, serialized_file_content.fetch(:request))
     end
@@ -44,7 +44,7 @@ module SeaShanty
     def test_the_stored_request_includes_the_time_of_saving
       @request_store.store(@request, @response)
       expected = DateTime.parse(DateTime.now.to_s)
-      serialized_file_content = YAML.load(path_for_request(@request).read)
+      serialized_file_content = YAML.safe_load(path_for_request(@request).read, permitted_classes: [Symbol])
       assert_operator(serialized_file_content, :has_key?, :stored_at)
       assert_equal(expected, DateTime.parse(serialized_file_content.fetch(:stored_at)))
     end
