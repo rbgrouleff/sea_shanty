@@ -1,4 +1,5 @@
-# TODO: Remove this require when implementing insertion in Faraday middleware stack
+# frozen_string_literal: true
+
 require "faraday"
 
 require "sea_shanty/request"
