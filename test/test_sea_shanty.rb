@@ -3,6 +3,16 @@
 require "test_helper"
 
 class TestSeaShanty < Minitest::Test
+  def setup
+    SeaShanty.configure do |config|
+      config.storage_dir = Dir.mktmpdir("sea_shanty")
+    end
+  end
+
+  def teardown
+    FileUtils.remove_entry(SeaShanty.configuration.storage_dir)
+  end
+
   def test_it_has_a_configuration
     assert_kind_of(SeaShanty::Configuration, SeaShanty.configuration)
   end
