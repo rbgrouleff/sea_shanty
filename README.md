@@ -148,6 +148,7 @@ In the current version [Faraday](https://lostisland.github.io/faraday/) is the o
 - [ ] Add interceptors for more HTTP libraries
 - [ ] Add optional response body compression to reduce storage requirements
 - [ ] Make it possible to overwrite stored requests and responses
+- [ ] Document `Request`, `Response` and `RequestStore`
 - [ ] More? Create an issue or send a pull request, if you think something is missing 🎉
 
 ## Development
