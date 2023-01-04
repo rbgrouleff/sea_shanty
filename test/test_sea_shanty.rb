@@ -12,6 +12,11 @@ class TestSeaShanty < Minitest::Test
   end
 
   def teardown
+    SeaShanty.interceptors.keys.each do |name|
+      SeaShanty.remove(name)
+    end
+
+    SeaShanty.interceptors.clear
     FileUtils.remove_entry(SeaShanty.configuration.storage_dir)
   end
 
@@ -68,23 +73,88 @@ class TestSeaShanty < Minitest::Test
     refute_predicate(SeaShanty.configuration, :readonly?)
   end
 
-  def test_intercept_inserts_identifier_in_list
-    skip("Not implemented yet...")
-    assert_predicate(SeaShanty.intercepted_libraries, :empty?)
-    SeaShanty.intercept(:faraday)
-    assert_includes(SeaShanty.intercepted_libraries, :faraday)
+  def test_register_interceptor_registers_an_interecptor_class
+    interceptor_class = Class.new
+    SeaShanty.register_interceptor(:name, interceptor_class)
+    assert_includes(SeaShanty.interceptors.values, interceptor_class)
   end
 
-  def test_intercept_only_adds_same_library_once
-    skip("Not implemented yet...")
+  def test_intercept_with_an_unknown_interceptor_name
+    assert_raises(SeaShanty::UnknownInterceptor) { SeaShanty.intercept(:nope) }
+  end
+
+  def test_intercept_calls_the_interceptor
+    identifier = :test
+    interceptor = interceptor_dummy.new
+    SeaShanty.register_interceptor(identifier, interceptor)
+    SeaShanty.intercept(identifier)
+    assert_predicate(interceptor, :intercepted)
+  end
+
+  def test_intercept_only_calls_the_interceptor_once
+    interceptor = interceptor_dummy.new
     identifier = :foo
-    assert_predicate(SeaShanty.intercepted_libraries, :empty?)
+    SeaShanty.register_interceptor(identifier, interceptor)
     SeaShanty.intercept(identifier)
     SeaShanty.intercept(identifier)
-    assert_equal(1, SeaShanty.intercepted_libraries.count { |i| i == identifier })
+    assert_equal(1, interceptor.intercept_count)
+  end
+
+  def test_remove_removes_an_interceptor
+    interceptor = interceptor_dummy.new
+    identifier = :foo
+    SeaShanty.register_interceptor(identifier, interceptor)
+    SeaShanty.intercept(identifier)
+    SeaShanty.remove(identifier)
+    assert_predicate(interceptor, :removed)
+  end
+
+  def test_remove_does_not_remove_an_interceptor_that_does_not_intercept
+    interceptor = interceptor_dummy.new
+    identifier = :foo
+    SeaShanty.register_interceptor(identifier, interceptor)
+    SeaShanty.remove(identifier)
+    refute_predicate(interceptor, :removed)
+  end
+
+  def test_remove_does_not_prevent_an_interceptor_from_intercepting_again
+    interceptor = interceptor_dummy.new
+    identifier = :foo
+    SeaShanty.register_interceptor(identifier, interceptor)
+    SeaShanty.intercept(identifier)
+    SeaShanty.remove(identifier)
+    SeaShanty.intercept(identifier)
+    assert_equal(2, interceptor.intercept_count)
+  end
+
+  def test_request_store_returns_a_request_store_instance
+    assert_kind_of(SeaShanty::RequestStore, SeaShanty.request_store)
   end
 
   def test_that_it_has_a_version_number
     refute_nil ::SeaShanty::VERSION
+  end
+
+  private
+
+  def interceptor_dummy
+    Class.new do
+      attr_reader(:intercepted, :intercept_count, :removed)
+
+      def initialize
+        @intercept_count = 0
+        @intercepted = false
+        @removed = false
+      end
+
+      def intercept!(request_store)
+        @intercepted = true
+        @intercept_count += 1
+      end
+
+      def remove
+        @removed = true
+      end
+    end
   end
 end

@@ -2,6 +2,7 @@
 
 require "sea_shanty/errors"
 require "sea_shanty/configuration"
+require "sea_shanty/request_store"
 require "sea_shanty/version"
 
 module SeaShanty
@@ -21,11 +22,41 @@ module SeaShanty
   end
 
   def intercept(identifier)
-    intercepted_libraries << identifier unless intercepted_libraries.include?(identifier)
+    return if intercepting.include?(identifier)
+    interceptors.fetch(identifier).intercept!(request_store)
+    intercepting << identifier
+  rescue KeyError
+    raise(
+      UnknownInterceptor,
+      "Cannot find an interceptor for #{identifier}. Available interceptors are: [#{interceptors.keys.join(", ")}]"
+    )
   end
 
-  def intercepted_libraries
-    @intercepted_libraries ||= []
+  def intercepting
+    @intercepting ||= []
+  end
+
+  def interceptors
+    @interceptors ||= {}
+  end
+
+  def register_interceptor(identifier, interceptor)
+    interceptors[identifier] = interceptor
+  end
+
+  def remove(identifier)
+    return unless intercepting.include?(identifier)
+    interceptors.fetch(identifier).remove
+    intercepting.delete(identifier)
+  rescue KeyError
+    raise(
+      UnknownInterceptor,
+      "Cannot find an interceptor for #{identifier}. Available interceptors are: [#{interceptors.keys.join(", ")}]"
+    )
+  end
+
+  def request_store
+    @request_store ||= RequestStore.new(configuration)
   end
 
   def configuration_overwrite(env_var, value)
