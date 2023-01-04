@@ -28,13 +28,13 @@ module SeaShanty
 
       def test_intercept_overwrites_the_faraday_connection_options_builder_class
         @interceptor.intercept!(@request_store)
-        assert_instance_of(RackBuilder, ::Faraday::ConnectionOptions.from(nil).new_builder(-> (_) {  }))
+        assert_instance_of(RackBuilder, ::Faraday::ConnectionOptions.from(nil).new_builder(->(_) {}))
       end
 
       def test_remove_restores_the_builder_class
         @interceptor.intercept!(@request_store)
         @interceptor.remove
-        assert_instance_of(::Faraday::RackBuilder, ::Faraday::ConnectionOptions.from(nil).new_builder(-> (_) {  }))
+        assert_instance_of(::Faraday::RackBuilder, ::Faraday::ConnectionOptions.from(nil).new_builder(->(_) {}))
       end
     end
   end
