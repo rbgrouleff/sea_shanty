@@ -9,4 +9,7 @@ module SeaShanty
 
   class UnknownRequest < Error
   end
+
+  class UnknownInterceptor < Error
+  end
 end
