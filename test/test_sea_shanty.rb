@@ -16,7 +16,6 @@ class TestSeaShanty < Minitest::Test
       SeaShanty.remove(name)
     end
 
-    SeaShanty.interceptors.clear
     FileUtils.remove_entry(SeaShanty.configuration.storage_dir)
   end
 

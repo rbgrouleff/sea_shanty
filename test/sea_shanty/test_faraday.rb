@@ -17,7 +17,6 @@ module SeaShanty
     end
 
     def teardown
-      SeaShanty.remove(:faraday)
       FileUtils.remove_entry(@dir)
     end
 
