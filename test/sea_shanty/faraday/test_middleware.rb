@@ -1,6 +1,7 @@
 # frozen_literal_string: true
 
 require "test_helper"
+require "fileutils"
 require "sea_shanty/configuration"
 require "sea_shanty/request_store"
 require "sea_shanty/faraday/middleware"
@@ -15,9 +16,9 @@ module SeaShanty
         @app = build_app(responds_to_close: true, response: @faraday_response)
 
         # SeaShanty stuff
-        dir = Dir.mktmpdir("sea_shanty")
+        @dir = Dir.mktmpdir("sea_shanty")
         configuration = Configuration.new
-        configuration.storage_dir = Pathname.new(dir)
+        configuration.storage_dir = Pathname.new(@dir)
         @request_store = RequestStore.new(configuration)
         @sea_shanty_request = Request.new(
           method: @faraday_request.method,
@@ -33,6 +34,10 @@ module SeaShanty
         )
 
         @middleware = Middleware.new(@app, request_store: @request_store)
+      end
+
+      def teardown
+        FileUtils.remove_entry(@dir)
       end
 
       def test_call_calls_the_app

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "fileutils"
 require "sea_shanty/configuration"
 require "sea_shanty/request_store"
 
@@ -14,6 +15,10 @@ module SeaShanty
         @configuration.storage_dir = Dir.mktmpdir("sea_shanty")
         @request_store = RequestStore.new(@configuration)
         @interceptor = Interceptor.new
+      end
+
+      def teardown
+        FileUtils.remove_entry(@configuration.storage_dir)
       end
 
       def test_intercept_sets_the_middleware_request_store
