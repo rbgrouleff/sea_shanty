@@ -33,7 +33,7 @@ require "faraday"
 SeaShanty.configure do |config|
   config.storage_dir = "fixtures/sea_shanty"
 end
-SeaShanty.intercept_from(:faraday)
+SeaShanty.intercept(:faraday)
 
 class TestSeaShanty < Minitest::Test
   def test_fetch
@@ -49,15 +49,15 @@ The first time the test above is run, the request is sent as normal, because Sea
 
 To prevent storing sensitive information like `Authorization` headers or credentials in the request body, use the `Configuration#request_body_filter` and `Configuration#request_headers_filter` described in the [Configuration](#configuration) section.
 
-### Hooking into an HTTP library
+### Interccept requests in an HTTP library
 
-The following call hooks into Faraday.
+The following call intercepts requests made with Faraday.
 
 ```ruby
-SeaShanty.intercept_from :faraday
+SeaShanty.intercept :faraday
 ```
 
-Any HTTP requests made before the call to `SeaShanty.intercept_from` will not be handled by SeaShanty.
+Any HTTP requests made before the call to `SeaShanty.intercept` will not be handled by SeaShanty.
 
 ### Configuration
 
@@ -87,6 +87,45 @@ Any HTTP requests made before the call to `SeaShanty.intercept_from` will not be
   * Is called once with each header name and value
   * Must return the filtered value
 
+### Creating your own interceptor
+
+Any object responding to `intercept!` and `remove` can be registered as interceptors in SeaShanty by calling `SeaShanty.register_interceptor(:identifier, interceptor)`.
+
+The `intercept!` method must be able to take an instance of a `SeaShanty::RequestStore` as its sole argument.
+
+#### Using the RequestStore
+
+When intercepting a request from the HTTP library, a `SeaShanty::Request` should be instantiated like so:
+
+```ruby
+request = SeaShanty::Request.new(method: "GET", url: "https://example.com", headers: {}, body: "")
+```
+
+The `method` should be a String or symbol, `url` should be a String or an `URI`, `headers` should be a hash, and `body` a String or `nil`.
+
+This `Request` objejct is then passed to `RequestStore#fetch` together with a block that takes no parameters and returns a `SeaShanty::Response`.
+
+If the response is not loaded from the request store, the block is instead called.
+
+To build a `Response` object use the initializer:
+
+```ruby
+SeaShanty::Response.new(status: 200, message: "OK", headers: {}, body: "", original_response: response_from_library)
+```
+
+The `status` should be an Integer, `message` a String or `nil`, `headers` should be a hash, `body` a String or `nil`. `original_response` is optional provided as a convenience.
+
+When `RequestStore#fetch` returns the response, it is the interceptor's responsibility to convert the `Response` object into a format the library understands. If the block to `fetch` was called, and `original_response` is set, `Response#was_stored?` is `true`, and the response from the HTTP library is available in `Response#original_response`. Otherwise the interceptor can retrieve the data from the `Response` object using attributes similarly named as the named parameters in the initializer.
+
+#### Registering an interceptor
+
+The Faraday interceptor is registered like so in `lib/sea_shanty/faraday.rb`:
+
+```ruby
+require "sea_shanty/faraday/interceptor"
+
+SeaShanty.register_interceptor :faraday, SeaShanty::Faraday::Interceptor.new
+```
 
 ### Supported HTTP libraries
 
@@ -103,19 +142,20 @@ In the current version [Faraday](https://lostisland.github.io/faraday/) is the o
 * [Stale Fish](https://github.com/jsmestad/stale_fish)
 * [WebFixtures](https://github.com/trydionel/web_fixtures)
 
-## TODO
+## Future development
 
-- [ ] Add hooks for more HTTP libraries
+- [ ] Add interceptors for more HTTP libraries
 - [ ] Add optional response body compression to reduce storage requirements
-- [ ] Enable hooking into multiple HTTP libraries at the same time
-- [ ] Make it possible to remove a hook at runtime
 - [ ] Make it possible to overwrite stored requests and responses
+- [ ] More? Create an issue or send a pull request, if you think something is missing 🎉
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. 
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+Before creating a pull request, please make sure `rake test` passes, and `rake standard` has no suggestions.
 
 ## Releasing a new version
 
