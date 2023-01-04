@@ -3,6 +3,7 @@
 require "test_helper"
 require "uri"
 require "sea_shanty/request"
+require "sea_shanty/request_serializer"
 
 module SeaShanty
   class TestRequest < Minitest::Test
@@ -55,6 +56,12 @@ module SeaShanty
         }
       }
       assert_equal(expected, request.to_h)
+    end
+
+    def test_url_can_be_a_string
+      serializer = RequestSerializer.new
+      request = Request.new(method: @method, url: @url.to_s, headers: @headers, body: @body)
+      assert(serializer.file_path(request))
     end
   end
 end
