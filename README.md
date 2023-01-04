@@ -26,9 +26,10 @@ The following is a minimal example of how to use SeaShanty.
 
 ```ruby
 require "rubygems"
-require "sea_shanty"
 require "minitest"
 require "faraday"
+require "sea_shanty"
+require "sea_shanty/faraday"
 
 SeaShanty.configure do |config|
   config.storage_dir = "fixtures/sea_shanty"
