@@ -109,6 +109,20 @@ module SeaShanty
       assert_raises(UnknownRequest) { @request_store.load_response(request) }
     end
 
+    def test_load_response_can_load_time_instances_in_the_yaml
+      @response.headers["date"] = Time.now
+      @request_store.store(@request, @response)
+      response = @request_store.load_response(@request)
+      assert_equal(@response, response)
+    end
+
+    def test_load_response_can_load_datetime_instances_in_the_yaml
+      @response.headers["date"] = DateTime.now
+      @request_store.store(@request, @response)
+      response = @request_store.load_response(@request)
+      assert_equal(@response, response)
+    end
+
     def test_fetch_returns_stored_response
       @request_store.store(@request, @response)
       returned_response = @request_store.fetch(@request) do

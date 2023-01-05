@@ -35,7 +35,7 @@ module SeaShanty
 
     def load_response(request)
       raise UnknownRequest, "SeaShanty: Unknown request #{request.method.to_s.upcase} to #{request.url}" unless has_response_for?(request)
-      contents = YAML.safe_load(request_file_path(request).read, permitted_classes: [Symbol])
+      contents = YAML.safe_load(request_file_path(request).read, permitted_classes: [Symbol, Time, DateTime])
       Response.from_h(contents.fetch(:response))
     end
 
