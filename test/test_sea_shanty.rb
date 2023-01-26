@@ -16,9 +16,10 @@ class TestSeaShanty < Minitest::Test
       SeaShanty.remove(name)
     end
 
-    FileUtils.remove_entry(SeaShanty.configuration.storage_dir)
+    FileUtils.remove_entry(SeaShanty.configuration.storage_dir) unless SeaShanty.configuration.storage_dir.nil?
     ENV.delete("SEA_SHANTY_BYPASS")
     ENV.delete("SEA_SHANTY_READONLY")
+    SeaShanty.reset!
   end
 
   def test_it_has_a_configuration
@@ -130,6 +131,12 @@ class TestSeaShanty < Minitest::Test
 
   def test_request_store_returns_a_request_store_instance
     assert_kind_of(SeaShanty::RequestStore, SeaShanty.request_store)
+  end
+
+  def test_reset_overwrites_the_configuration
+    config = SeaShanty.configuration
+    SeaShanty.reset!
+    refute_equal(config, SeaShanty.configuration)
   end
 
   def test_that_it_has_a_version_number

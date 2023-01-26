@@ -18,6 +18,7 @@ module SeaShanty
 
     def teardown
       FileUtils.remove_entry(@dir)
+      SeaShanty.reset!
     end
 
     def test_faraday_requests_are_being_stored
