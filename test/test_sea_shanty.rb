@@ -16,9 +16,10 @@ class TestSeaShanty < Minitest::Test
       SeaShanty.remove(name)
     end
 
-    FileUtils.remove_entry(SeaShanty.configuration.storage_dir)
+    FileUtils.remove_entry(SeaShanty.configuration.storage_dir) unless SeaShanty.configuration.storage_dir.nil?
     ENV.delete("SEA_SHANTY_BYPASS")
     ENV.delete("SEA_SHANTY_READONLY")
+    SeaShanty.reset!
   end
 
   def test_it_has_a_configuration
