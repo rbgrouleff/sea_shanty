@@ -132,6 +132,12 @@ class TestSeaShanty < Minitest::Test
     assert_kind_of(SeaShanty::RequestStore, SeaShanty.request_store)
   end
 
+  def test_reset_overwrites_the_configuration
+    config = SeaShanty.configuration
+    SeaShanty.reset!
+    refute_equal(config, SeaShanty.configuration)
+  end
+
   def test_that_it_has_a_version_number
     refute_nil ::SeaShanty::VERSION
   end

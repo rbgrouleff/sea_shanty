@@ -59,6 +59,11 @@ module SeaShanty
     RequestStore.new(configuration)
   end
 
+  def reset!
+    @configuration = Configuration.new
+    configure {  }
+  end
+
   def configuration_overwrite(env_var, value)
     if env_var.nil? || env_var.empty?
       value
