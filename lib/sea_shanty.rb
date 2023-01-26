@@ -61,7 +61,7 @@ module SeaShanty
 
   def reset!
     @configuration = Configuration.new
-    configure {  }
+    configure {}
   end
 
   def configuration_overwrite(env_var, value)
