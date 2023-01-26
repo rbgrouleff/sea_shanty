@@ -56,7 +56,7 @@ module SeaShanty
   end
 
   def request_store
-    @request_store ||= RequestStore.new(configuration)
+    RequestStore.new(configuration)
   end
 
   def configuration_overwrite(env_var, value)
