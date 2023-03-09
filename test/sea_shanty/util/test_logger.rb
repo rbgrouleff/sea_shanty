@@ -16,7 +16,7 @@ module SeaShanty
 
     def test_initialize_with_a_file_object
       File.open(File.join(@dir, "#{__method__}.log"), "a+") do |file|
-        logger = ::SeaShanty::Logger.new(file)
+        logger = Logger.new(file)
 
         assert_equal file, logger.destination
       end
@@ -24,14 +24,14 @@ module SeaShanty
 
     def test_initialize_with_a_writable_object
       io = StringIO.new
-      logger = ::SeaShanty::Logger.new(io)
+      logger = Logger.new(io)
 
       assert_equal io, logger.destination
     end
 
     def test_initialize_with_a_path_string
       path = File.join(@dir, "#{__method__}.log")
-      logger = ::SeaShanty::Logger.new(path)
+      logger = Logger.new(path)
 
       assert_kind_of File, logger.destination
       assert_equal path, logger.destination.path
