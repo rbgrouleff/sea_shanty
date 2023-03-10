@@ -16,5 +16,10 @@ module SeaShanty
       destination.write(message)
       destination.write("\n") unless message.end_with?("\n")
     end
+
+    class NullLogger
+      def log(*)
+      end
+    end
   end
 end

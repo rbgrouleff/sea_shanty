@@ -56,5 +56,11 @@ module SeaShanty
 
       assert_equal "#{message}\n", destination.string
     end
+
+    def test_null_logger
+      logger = Logger::NullLogger.new
+
+      assert_respond_to logger, :log
+    end
   end
 end
