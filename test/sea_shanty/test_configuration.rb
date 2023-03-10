@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "stringio"
 
 module SeaShanty
   class TestConfiguration < Minitest::Test
@@ -138,6 +139,17 @@ module SeaShanty
     def test_setting_request_headers_filter_to_something_that_is_not_callable
       filter = :foo
       assert_raises(ConfigurationError) { @configuration.request_headers_filter = filter }
+    end
+
+    def test_logger_is_present
+      refute_nil @configuration.logger
+    end
+
+    def test_setting_log
+      log_destination = StringIO.new
+      @configuration.log = log_destination
+
+      assert_equal log_destination, @configuration.logger.destination
     end
   end
 end
