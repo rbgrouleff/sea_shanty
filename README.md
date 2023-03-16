@@ -87,6 +87,9 @@ Any HTTP requests made before the call to `SeaShanty.intercept` will not be hand
   * A callable object with an arity of 2
   * Is called once with each header name and value
   * Must return the filtered value
+* `log`
+  * Is the destination, where SeaShanty should log to
+  * Must be either an object that responds to `write` or a path to a file to write log entries to
 
 ### Creating your own interceptor
 
