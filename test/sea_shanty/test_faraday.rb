@@ -24,7 +24,8 @@ module SeaShanty
     def test_faraday_requests_are_being_stored
       ::Faraday.get("http://httpbingo.org")
       request = SeaShanty::Request.new(method: :get, url: "http://httpbingo.org", headers: {}, body: nil)
-      assert_operator(SeaShanty.request_store, :has_response_for?, request)
+      path = SeaShanty.request_store.request_file_path(request)
+      assert_predicate(path, :exist?)
     end
   end
 end

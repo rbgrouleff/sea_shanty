@@ -51,13 +51,13 @@ module SeaShanty
       end
 
       def test_call_does_not_call_app_when_request_is_known
-        @request_store.store(@sea_shanty_request, @sea_shanty_response)
+        @request_store.store(@request_store.request_file_path(@sea_shanty_request), @sea_shanty_request, @sea_shanty_response)
         @middleware.call(@faraday_request)
         assert_nil(@app.last_request)
       end
 
       def test_call_returns_a_faraday_response_when_request_is_known
-        @request_store.store(@sea_shanty_request, @sea_shanty_response)
+        @request_store.store(@request_store.request_file_path(@sea_shanty_request), @sea_shanty_request, @sea_shanty_response)
         response = @middleware.call(@faraday_request)
         assert_response(@faraday_response, response)
       end
