@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.2.0] - 2023-03-16
+
 - Add a bit of logging ([#3])
 - Update CI to run against MRI 3.2.1 instead of 3.2.0
 

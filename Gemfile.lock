@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sea_shanty (0.1.1)
+    sea_shanty (0.2.0)
 
 GEM
   remote: https://rubygems.org/
