@@ -32,12 +32,13 @@ module SeaShanty
 
     def load_response(path, request)
       raise UnknownRequest, "SeaShanty: Unknown request #{request.method.to_s.upcase} to #{request.url}" unless path.exist?
+      log("Loading response for #{request.url} from #{path}")
       contents = YAML.safe_load(Pathname(path).read, permitted_classes: [Symbol, Time, DateTime])
       Response.from_h(contents.fetch(:response))
     end
 
     def store(path, request, response)
-      file_path = request_file_path(request)
+      log("Storing response for #{request.url} in #{path}")
       path.dirname.mkpath
       path.open("w+") do |file|
         file.write(YAML.dump(serialize(request, response)))
@@ -47,8 +48,9 @@ module SeaShanty
     def request_file_path(request)
       _, generic_file_path = generic_responses.find { |matcher, path| matcher.match?(request.url.to_s) }
       file_path = if generic_file_path.nil?
-        request_serializer.file_path(request)
+        request_serializer.file_path(request).tap { |path| log("Generated #{path} for request to #{request.url}") }
       else
+        log("Found a generic response in #{generic_file_path} for request to #{request.url}")
         Pathname.new(generic_file_path.to_s)
       end
 
@@ -65,6 +67,10 @@ module SeaShanty
         response: response.to_h,
         stored_at: DateTime.now.to_s
       }
+    end
+
+    def log(message)
+      configuration.logger.log(message)
     end
   end
 end
