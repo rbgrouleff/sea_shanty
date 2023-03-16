@@ -23,26 +23,26 @@ module SeaShanty
     end
 
     def test_it_stores_a_request_with_the_resulting_response
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       assert_path_exists(path_for_request(@request))
     end
 
     def test_the_stored_request_includes_the_response
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       serialized_file_content = YAML.safe_load(path_for_request(@request).read, permitted_classes: [Symbol])
       assert_operator(serialized_file_content, :has_key?, :response)
       assert_equal(@response.to_h, serialized_file_content.fetch(:response))
     end
 
     def test_the_stored_request_includes_the_request
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       serialized_file_content = YAML.safe_load(path_for_request(@request).read, permitted_classes: [Symbol])
       assert_operator(serialized_file_content, :has_key?, :request)
       assert_equal(@request.to_h, serialized_file_content.fetch(:request))
     end
 
     def test_the_stored_request_includes_the_time_of_saving
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       expected = DateTime.parse(DateTime.now.to_s)
       serialized_file_content = YAML.safe_load(path_for_request(@request).read, permitted_classes: [Symbol])
       assert_operator(serialized_file_content, :has_key?, :stored_at)
@@ -50,15 +50,16 @@ module SeaShanty
     end
 
     def test_it_has_the_reponse_for_a_stored_request
-      @request_store.store(@request, @response)
-      assert_operator(@request_store, :has_response_for?, @request)
+      path = @request_store.request_file_path(@request)
+      @request_store.store(path, @request, @response)
+      assert_predicate(path, :exist?)
     end
 
     def test_it_has_the_response_when_a_generic_response_regex_matches_request_url
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
 
-      @request_store.store(generic_request, generic_response)
+      @request_store.store(@request_store.request_file_path(generic_request), generic_request, generic_response)
       @config.generic_responses[/\/generic\//] = path_for_request(generic_request).to_s
 
       actual_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/actual"), headers: {}, body: nil)
@@ -73,7 +74,7 @@ module SeaShanty
     def test_it_ensures_generic_response_path_is_relative_to_storage_dir
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
-      @request_store.store(generic_request, generic_response)
+      @request_store.store(@request_store.request_file_path(generic_request), generic_request, generic_response)
       @config.generic_responses[/\/generic\//] = path_for_request(generic_request).to_s
       actual_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/actual"), headers: {}, body: nil)
       actual_response = @request_store.fetch(actual_request) do
@@ -86,7 +87,7 @@ module SeaShanty
     def test_it_passes_to_block_when_generic_response_regex_does_not_match_request_url
       generic_request = Request.new(method: :get, url: URI.parse("https://example.com/generic/1234"), headers: {}, body: nil)
       generic_response = Response.new(status: 200, message: "OK", headers: {}, body: "generic response")
-      @request_store.store(generic_request, generic_response)
+      @request_store.store(@request_store.request_file_path(generic_request), generic_request, generic_response)
       @config.generic_responses[/\/generic\//] = path_for_request(generic_request).to_s
       actual_request = Request.new(method: :get, url: URI.parse("https://example.com/not_generic/actual"), headers: {}, body: nil)
       expected_response = Response.new(status: 200, message: "OK", headers: {}, body: "NOT generic response")
@@ -98,33 +99,37 @@ module SeaShanty
     end
 
     def test_load_response_finds_the_response_for_a_stored_request
-      @request_store.store(@request, @response)
-      assert_equal(@response, @request_store.load_response(@request))
+      path = @request_store.request_file_path(@request)
+      @request_store.store(path, @request, @response)
+      assert_equal(@response, @request_store.load_response(path, @request))
     end
 
     def test_load_response_raises_if_request_is_unknown
       method = :put
       refute_equal(method, @request.method)
       request = Request.new(method: method, url: @request.url, headers: @request.headers, body: @request.body)
-      assert_raises(UnknownRequest) { @request_store.load_response(request) }
+      path = @request_store.request_file_path(request)
+      assert_raises(UnknownRequest) { @request_store.load_response(path, request) }
     end
 
     def test_load_response_can_load_time_instances_in_the_yaml
       @response.headers["date"] = Time.now
-      @request_store.store(@request, @response)
-      response = @request_store.load_response(@request)
+      path = @request_store.request_file_path(@request)
+      @request_store.store(path, @request, @response)
+      response = @request_store.load_response(path, @request)
       assert_equal(@response, response)
     end
 
     def test_load_response_can_load_datetime_instances_in_the_yaml
       @response.headers["date"] = DateTime.now
-      @request_store.store(@request, @response)
-      response = @request_store.load_response(@request)
+      path = @request_store.request_file_path(@request)
+      @request_store.store(path, @request, @response)
+      response = @request_store.load_response(path, @request)
       assert_equal(@response, response)
     end
 
     def test_fetch_returns_stored_response
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       returned_response = @request_store.fetch(@request) do
         raise "NOPE"
       end
@@ -133,21 +138,21 @@ module SeaShanty
     end
 
     def test_fetch_stores_response_for_unknown_request
-      refute_operator(@request_store, :has_response_for?, @request)
+      refute_predicate(@request_store.request_file_path(@request), :exist?)
       @request_store.fetch(@request) do
         @response
       end
 
-      assert_operator(@request_store, :has_response_for?, @request)
+      assert_predicate(@request_store.request_file_path(@request), :exist?)
     end
 
     def test_fetch_returns_stored_response_after_storing_it
-      refute_operator(@request_store, :has_response_for?, @request)
+      refute_predicate(@request_store.request_file_path(@request), :exist?)
       returned_response = @request_store.fetch(@request) do
         @response
       end
 
-      assert_operator(@request_store, :has_response_for?, @request)
+      assert_predicate(@request_store.request_file_path(@request), :exist?)
       assert_equal(@response, returned_response)
     end
 
@@ -159,7 +164,7 @@ module SeaShanty
 
     def test_fetch_returns_stored_response_when_readonly
       @config.readonly = true
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       returned_response = @request_store.fetch(@request) { raise "NOPE" }
 
       assert_equal(@response, returned_response)
@@ -168,16 +173,16 @@ module SeaShanty
     def test_fetch_does_not_store_response_when_bypass_is_set_and_response_is_not_stored
       @config.bypass = true
 
-      refute_operator(@request_store, :has_response_for?, @request)
+      refute_predicate(@request_store.request_file_path(@request), :exist?)
       returned_response = @request_store.fetch(@request) { @response }
 
-      refute_operator(@request_store, :has_response_for?, @request)
+      refute_predicate(@request_store.request_file_path(@request), :exist?)
       assert_equal(@response, returned_response)
     end
 
     def test_fetch_returns_response_from_block_if_it_has_a_stored_response_when_bypass_is_set
       @config.bypass = true
-      @request_store.store(@request, @response)
+      @request_store.store(@request_store.request_file_path(@request), @request, @response)
       expected_response = Response.new(status: 302, message: "Temporary redirect", headers: {"Location" => "https://example.com/redirected"}, body: nil)
       returned_response = @request_store.fetch(@request) { expected_response }
 

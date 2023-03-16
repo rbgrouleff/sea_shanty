@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
 require "sea_shanty/errors"
+require "sea_shanty/util/logger"
 
 module SeaShanty
   class Configuration
     attr_accessor :bypass, :readonly, :storage_dir
     alias_method :bypass?, :bypass
     alias_method :readonly?, :readonly
+
+    def log=(destination)
+      @logger = Logger.new(destination)
+    end
+
+    def logger
+      @logger ||= Logger::NullLogger.new
+    end
 
     def generic_responses=(responses)
       unless Hash === responses
