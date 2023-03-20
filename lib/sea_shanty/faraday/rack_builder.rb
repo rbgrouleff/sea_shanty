@@ -14,7 +14,7 @@ module SeaShanty
       private
 
       def insert_middleware
-        return if handlers.any? { |h| ::SeaShanty::Faraday::Middleware == h.klass }
+        return if handlers.any? { |h| h.klass == ::SeaShanty::Faraday::Middleware }
         insert_before(handlers.size, ::SeaShanty::Faraday::Middleware)
       end
     end

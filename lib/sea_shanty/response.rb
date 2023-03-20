@@ -38,7 +38,7 @@ module SeaShanty
     end
 
     def was_stored?
-      ORIGINAL_RESPONSE_NOT_PRESENT != original_response
+      original_response != ORIGINAL_RESPONSE_NOT_PRESENT
     end
 
     def ==(other)
