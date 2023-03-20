@@ -18,7 +18,7 @@ module SeaShanty
       def test_lock_only_inserts_middleware_once
         @rack_builder.lock!
         @rack_builder.lock!
-        assert_equal(1, @rack_builder.handlers.count { |h| Middleware == h.klass })
+        assert_equal(1, @rack_builder.handlers.count { |h| h.klass == Middleware })
       end
     end
   end
